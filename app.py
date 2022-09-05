@@ -9,7 +9,7 @@ from replybuttons import keyboard_bekor_qilish
 from inlinebuttons import keyboard_qodni_qayta_yuborish
 from baza import baseadd, basebantek, basebanadd
 from datetime import datetime
-from functions import f1
+from functions import f1, qodniyuborish,qodnitasdiqlash
 from variables import baza
 #start
 @dp.message_handler(CommandStart())
@@ -28,7 +28,7 @@ async def inputtelnumber(message:types.Message,state:FSMContext):
     if result[0]:
         await message.answer(result[1],reply_markup = keyboard_bekor_qilish)
         await state.update_data(telefonraqm=m)
-        q = qodniyuborish()
+        q = qodniyuborish(m)
         if q[0]:
             token = q[1]
             baza[message.from_user.id][m]={
@@ -54,14 +54,15 @@ async def inputcode(message:types.Message,state:FSMContext):
                 basebanadd(tel_raqami)
                 await Asosiy.tel_number.set()
             else:
-                a = qodniqaytayuborish(tel_raqami)
+                a = qodniyuborish(tel_raqami)
                 if a[0]:
                     await message.answer('Qod qayta yuborildi iltimos uni 2 daqiqa ichida kiriting!')
                     baza[message.from_user.id][tel_raqami]['qayta_yuborishlar']-=1
                     baza[message.from_user.id][tel_raqami]['qayta_terishlar']=3
+                    baza[message.from_user.id][tel_raqami]['token'] = a[1]
                     await Asosiy.sms_qod.set()
                 else:
-                    await message.answer('Xatolik iltimos qayta urinib koring!')
+                    await message.answer(a[1])
                     await Asosiy.tel_number.set()
         else:
             await message.answer('Qod yuborilganiga hali 2 daqiqa bo`lmadi iltimos kuting va qodni yuboring!')
@@ -70,7 +71,7 @@ async def inputcode(message:types.Message,state:FSMContext):
         await message.answer('Bekor qilindi!')
         await message.answer( 'Telefon raqamingizni kiritishingiz mumkin!\nNamuna:912779693' )
         await Asosiy.tel_number.set()
-    elif qodnitek(m):
+    elif qodnitasdiqlash(m):
         await message.answer('Tabriklaymiz siz muvaffaqiyatli ro`yxatdan o`tdingiz')
         await message.answer('Telefon raqamingizni kiritishingiz mumkin!\nNamuna:912779693')
         baseadd(message.from_user.id,message.chat.id,tel_raqami)

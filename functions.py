@@ -1,5 +1,6 @@
 from baza import basetek, basebantek
-
+from send import send
+from vote import vote
 def f1(telefon_raqam):
 	if len(telefon_raqam) == 7:
 		try:
@@ -12,3 +13,17 @@ def f1(telefon_raqam):
 		except:
 			return [False, 'Iltimos raqamni to`g`ri kiriting!']
 	else:return [False, 'Iltimos raqamni to`gri kiriting!']
+
+def qodniyuborish(tel):
+	a = send(tel)
+	if 'This number was used to vote' in a[1] and a[0] is not True:
+		return [False,'Bu raqam oldin ro`yxatdan o`tgan!']
+	elif 'Incorrect phone number' in a[1] and a[0] is not True:
+		return [False, 'Bu raqam noto`g`ri!']
+	elif a[0]:
+		return [True,a[1]]
+def qodnitasdiqlash(tel,kod,token):
+	a = vote(tel,kod,token)
+	if 'Invalid code' in str(a):
+		return False
+	else:return True
