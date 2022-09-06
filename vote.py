@@ -16,4 +16,4 @@ def vote(phone_number, kod, token):
 
 #   agar parol xato bo'lsa 'Invalid code' shu xabar qaytadi. JSON Key and Value -> {'detail': 'Invalid code'}
 
-
+print(vote(998992231638, '1452', 'TFVFBK46GJT5EJU3IILDZXWRZLCSLRQA').json())

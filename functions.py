@@ -2,7 +2,7 @@ from baza import basetek, basebantek
 from send import send
 from vote import vote
 def f1(telefon_raqam):
-	if len(telefon_raqam) == 9:
+	if len(telefon_raqam) == 7:
 		try:
 			int(telefon_raqam)
 			if basetek(telefon_raqam):
@@ -27,6 +27,3 @@ def qodnitasdiqlash(tel,kod,token):
 	if 'Invalid code' in str(a):
 		return False
 	else:return True
-	
-a=qodniyuborish('99945999936')
-print(a)

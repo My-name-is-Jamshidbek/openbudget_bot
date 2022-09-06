@@ -17,22 +17,21 @@ async def start(message:types.Message):
     # if str(message.from_user.id) == str(ADMIN_ID):
     #     await message.answer('salomadmin botga hush kelibsiz!', reply_markup=keyboard_admin_menu_1, )
     if True:
-        await message.answer(f"Assalomu aleykum {message.from_user.full_name} botga xush kelibsiz!\nIltimos telefon raqmingizni namunadagidek yozing va jo'nating:\nNamuna: 991115678")
-        baza[str(message.from_user.id)] = {}
+        await message.answer(f"Assalomu aleykum {message.from_user.full_name} botga xush kelibsiz!\nIltimos telefon raqmingizni namunadagidek yozing va jo'nating:\nNamuna: 99 111 56 78")
+        baza[message.from_user.id] = {}
         await Asosiy.tel_number.set()
 
-@dp.message_handler(state = Asosiy.tel_number,content_types = types.ContentType.TEXT)
+@dp.message_handler(state = Asosiy.tel_number,content_types = types.Message)
 async def inputtelnumber(message:types.Message,state:FSMContext):
-    m = str(message.text)
-    result = f1(str(m))
+    m = message.text
+    result = f1(message.from_user.id)
     if result[0]:
         await message.answer(result[1],reply_markup = keyboard_bekor_qilish)
-        await state.update_data(telefonraqam=m)
-        # q = qodniyuborish(m)
-        q = [True,'tokejkn']
+        await state.update_data(telefonraqm=m)
+        q = qodniyuborish(m)
         if q[0]:
             token = q[1]
-            baza[str(message.from_user.id)][m]={
+            baza[message.from_user.id][m]={
                     'qayta_yuborishlar':3,
                     'qayta_terishlar':3,
                     'raqam_vaqti':datetime.now(),
@@ -43,27 +42,24 @@ async def inputtelnumber(message:types.Message,state:FSMContext):
         await message.answer(result[1])
         await message.answer('Telefon raqamingizni kiritishingiz mumkin!\nNamuna:912779693')
         await Asosiy.tel_number.set()
-@dp.message_handler(state = Asosiy.sms_qod,content_types = types.ContentType.TEXT)
+@dp.message_handler(state = Asosiy.sms_qod,content_types = types.Message)
 async def inputcode(message:types.Message,state:FSMContext):
     m = message.text
     data = await state.get_data()
     tel_raqami = data.get('telefonraqam')
-    token = baza[str(message.from_user.id)][tel_raqami]['token']
     if m=='Qodni qayta yuborish':
-        if int(str(datetime.now()-baza[str(message.from_user.id)][tel_raqami]['raqam_vaqti'])[2:4])>=2:
-            if baza[str(message.from_user.id)][tel_raqami]['qayta_yuborishlar']<=0:
+        if int(str(datetime.now()-baza[message.from_user.id][tel_raqami]['raqam_vaqti'])[2:4])>=2:
+            if baza[message.from_user.id][tel_raqami]['qayta_yuborishlar']<=0:
                 await message.answer('Bu raqam bloklandi!')
-                a = basebanadd(tel_raqami)
-                if a is not True:print('qodni qayta yuborish basebanadd false')
+                basebanadd(tel_raqami)
                 await Asosiy.tel_number.set()
             else:
-                # a = qodniyuborish(tel_raqami)
-                a = [True,'token']
+                a = qodniyuborish(tel_raqami)
                 if a[0]:
                     await message.answer('Qod qayta yuborildi iltimos uni 2 daqiqa ichida kiriting!')
-                    baza[str(message.from_user.id)][tel_raqami]['qayta_yuborishlar']-=1
-                    baza[str(message.from_user.id)][tel_raqami]['qayta_terishlar']=3
-                    baza[str(message.from_user.id)][tel_raqami]['token'] = a[1]
+                    baza[message.from_user.id][tel_raqami]['qayta_yuborishlar']-=1
+                    baza[message.from_user.id][tel_raqami]['qayta_terishlar']=3
+                    baza[message.from_user.id][tel_raqami]['token'] = a[1]
                     await Asosiy.sms_qod.set()
                 else:
                     await message.answer(a[1])
@@ -75,20 +71,18 @@ async def inputcode(message:types.Message,state:FSMContext):
         await message.answer('Bekor qilindi!')
         await message.answer( 'Telefon raqamingizni kiritishingiz mumkin!\nNamuna:912779693' )
         await Asosiy.tel_number.set()
-    elif qodnitasdiqlash(tel_raqami,m,token):
-    # elif False:
+    elif qodnitasdiqlash(m):
         await message.answer('Tabriklaymiz siz muvaffaqiyatli ro`yxatdan o`tdingiz')
         await message.answer('Telefon raqamingizni kiritishingiz mumkin!\nNamuna:912779693')
-        baseadd(str(message.from_user.id),str(message.chat.id),tel_raqami)
-        del baza[str(message.from_user.id)][tel_raqami]
+        baseadd(message.from_user.id,message.chat.id,tel_raqami)
+        del baza[message.from_user.id][tel_raqami]
         await Asosiy.tel_number.set()
     else:
         await message.answer('Siz tergan parol noto`g`ri iltimos tekshirib qayta tering!')
-        baza[str(message.from_user.id)][tel_raqami]['qayta_terishlar']-=1
-        if baza[str(message.from_user.id)][tel_raqami]['qayta_terishlar'] <=0 :
+        baza[message.from_user.id][tel_raqami]['qayta_terishlar']-=1
+        if baza[message.from_user.id][tel_raqami]['qayta terishlar'] <=0 :
             await message.answer('3 marotaba xato terishlarddan keyin raqamingiz bloklandi!')
-            a = basebanadd(tel_raqami)
-            if a is not True:print('else basebanadd false line 91')
+            basebanadd(tel_raqami)
             await message.answer('Telefon raqamingizni kiritishingiz mumkin!\nNamuna:912779693')
             await Asosiy.tel_number.set()
         else:
